@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 
 import neptune.new as neptune
 import neptune.new.integrations.sklearn as npt_utils
-from neptune.new.types import File
 
 import config
 
@@ -42,12 +41,7 @@ X, y = load_breast_cancer(return_X_y=True, as_frame=True)
 
 X.columns = [c.lower().replace(' ', '_') for c in X.columns]
 
-features = ['mean_radius', 'mean_texture', 'mean_perimeter', 'mean_area',
-       'mean_smoothness', 'mean_compactness', 'mean_concavity',
-       'mean_concave_points', 'mean_symmetry', 'mean_fractal_dimension',
-       'radius_error', 'texture_error', 'perimeter_error', 'area_error',
-       'smoothness_error', 'compactness_error', 'concavity_error',
-       'concave_points_error', 'symmetry_error', 'fractal_dimension_error']
+features = ['mean_radius', 'mean_texture']
 
 filepath = Path.cwd().joinpath('./datasets/features/features.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)
@@ -147,7 +141,6 @@ run["explainability_plots/xgboost_plot_importance"].upload(plt_importance.figure
 # test predictions,
 # test predictions probabilities,
 # test scores
-
 
 run["classification_metrics_for_validation_set"] = npt_utils.create_classifier_summary(
     xgb_model, X_train, X_valid, y_train, y_valid
