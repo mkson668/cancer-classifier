@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 
 import neptune.new as neptune
 import neptune.new.integrations.sklearn as npt_utils
+from neptune.new.types import File
 
 import config
 
@@ -24,7 +25,7 @@ pd.set_option("display.precision", 4)
 run = neptune.init_run(
     project="aaronwong/breast-cancer-classification",
     api_token=config.NEPTUNE_KEY,
-    tags=['run_0', 'classification', 'n=569']
+    tags=['classification', 'n=569']
 )
 
 params = {
@@ -41,7 +42,7 @@ X, y = load_breast_cancer(return_X_y=True, as_frame=True)
 
 X.columns = [c.lower().replace(' ', '_') for c in X.columns]
 
-features = ['mean_radius', 'mean_texture']
+features = ['worst_symmetry', 'worst_fractal_dimension']
 
 filepath = Path.cwd().joinpath('./datasets/features/features.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)
