@@ -42,7 +42,8 @@ X, y = load_breast_cancer(return_X_y=True, as_frame=True)
 
 X.columns = [c.lower().replace(' ', '_') for c in X.columns]
 
-features = ['worst_concavity', 'worst_concave_points', 'worst_symmetry', 'worst_fractal_dimension']
+features = ['worst_perimeter', 'worst_area',
+       'worst_smoothness', 'worst_compactness',]
 
 filepath = Path.cwd().joinpath('./datasets/features/features.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)
