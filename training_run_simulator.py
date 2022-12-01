@@ -41,7 +41,7 @@ X, y = load_breast_cancer(return_X_y=True, as_frame=True)
 
 X.columns = [c.lower().replace(' ', '_') for c in X.columns]
 
-features = ['mean_symmetry', 'mean_fractal_dimension', 'radius_error', 'texture_error']
+features = ['mean_radius', 'mean_texture']
 
 filepath = Path.cwd().joinpath('./datasets/features/features.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)
