@@ -44,7 +44,8 @@ X.columns = [c.lower().replace(' ', '_') for c in X.columns]
 features = ['mean_radius', 'mean_texture', 'mean_perimeter', 'mean_area',
        'mean_smoothness', 'mean_compactness', 'mean_concavity',
        'mean_concave_points', 'mean_symmetry', 'mean_fractal_dimension',
-       'radius_error', 'texture_error',]
+       'radius_error', 'texture_error','perimeter_error', 'area_error',
+       'smoothness_error']
 
 filepath = Path.cwd().joinpath('./datasets/features/features.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)
