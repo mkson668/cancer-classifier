@@ -41,7 +41,9 @@ X, y = load_breast_cancer(return_X_y=True, as_frame=True)
 
 X.columns = [c.lower().replace(' ', '_') for c in X.columns]
 
-features = ['worst_concave_points', 'worst_symmetry', 'worst_fractal_dimension']
+features = ['worst_texture', 'worst_perimeter', 'worst_area',
+       'worst_smoothness', 'worst_compactness', 'worst_concavity',
+       'worst_concave_points', 'worst_symmetry', 'worst_fractal_dimension']
 
 filepath = Path.cwd().joinpath('./datasets/features/features.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)
@@ -80,14 +82,14 @@ filepath = Path.cwd().joinpath('datasets/test/test_df.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)
 test_df.to_csv(filepath)
 
-# run["dataset_metadata/training_dataset_metadata"].track_files('./datasets/train/train_df.csv')
-# run["dataset_metadata/validation_dataset_metadata"].track_files('./datasets/valid/valid_df.csv')
-# run["dataset_metadata/testing_dataset_metadata"].track_files('./datasets/test/test_df.csv')
+run["dataset_metadata/training_dataset_metadata"].track_files('./datasets/train/train_df.csv')
+run["dataset_metadata/validation_dataset_metadata"].track_files('./datasets/valid/valid_df.csv')
+run["dataset_metadata/testing_dataset_metadata"].track_files('./datasets/test/test_df.csv')
 
 
 # to track data usage using project metadata (first we need to upload to project metadata first btw)
-proj = neptune.init_project(name="aaronwong/breast-cancer-classification", api_token=config.NEPTUNE_KEY)
-run["dataset_metadata/project_dataset_ver"] = proj['datasets/v0.1'].fetch()
+# proj = neptune.init_project(name="aaronwong/breast-cancer-classification", api_token=config.NEPTUNE_KEY)
+# run["dataset_metadata/project_dataset_ver"] = proj['datasets/v0.2'].fetch()
 
 xgb_model = xgb.XGBClassifier()
 xgb_model.set_params(**params)
