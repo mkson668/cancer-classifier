@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 
 import neptune.new as neptune
 import neptune.new.integrations.sklearn as npt_utils
-from neptune.new.types import File
 
 import config
 
@@ -119,10 +118,14 @@ shap.plots.beeswarm(shap_vals, max_display=10, show=False)
 shap_bee_plot = plt.gcf()
 run["explainability_plots/training_dataset_SHAP"].upload(shap_bee_plot)
 
+plt.clf()
+
 shap_vals = explainer(X_valid)
 shap.plots.beeswarm(shap_vals, max_display=10, show=False)
 shap_bee_plot = plt.gcf()
 run["explainability_plots/validation_dataset_SHAP"].upload(shap_bee_plot)
+
+plt.clf()
 
 shap_vals = explainer(X_test)
 shap.plots.beeswarm(shap_vals, max_display=10, show=False)
@@ -130,7 +133,6 @@ shap_bee_plot = plt.gcf()
 run["explainability_plots/testing_dataset_SHAP"].upload(shap_bee_plot)
 
 plt_importance = plot_importance(xgb_model, max_num_features=10, importance_type='weight')
-
 run["explainability_plots/xgboost_plot_importance"].upload(plt_importance.figure)
 
 # model performance logging  ==========================================================
@@ -150,6 +152,46 @@ run["classification_metrics_for_validation_set"] = npt_utils.create_classifier_s
 run["classification_metrics_for_testing_set"] = npt_utils.create_classifier_summary(
     xgb_model, X_train, X_test, y_train, y_test
 )
+
+# pred results validation set ========================================================
+
+y_pred = xgb_model.predict_proba(X_valid, xgb_model.best_ntree_limit)
+df_pred = pd.DataFrame(y_pred)
+
+y_pred_non_prob = xgb_model.predict(X_valid)
+df_pred_non_prob = pd.DataFrame(y_pred_non_prob)
+
+df_pred_non_prob.rename(columns={0:'y_pred'}, inplace=True)
+predictions_valid_df = pd.concat([
+    pd.DataFrame(y_pred),
+    df_pred_non_prob.reset_index(drop=True),
+    y_valid.reset_index(drop=True),
+    X_valid.reset_index(drop=True)], axis=1)
+
+predictions_valid_df.rename(columns={'target':'has_cancer (y_true)'}, inplace=True)
+predictions_valid_df.to_csv('./predictions/valid/validation_predictions.csv')
+
+run["predictions/validation_set"].upload('./predictions/valid/validation_predictions.csv')
+
+# pred results test set ===============================================================
+
+y_pred = xgb_model.predict_proba(X_test, xgb_model.best_ntree_limit)
+df_pred = pd.DataFrame(y_pred)
+
+y_pred_non_prob = xgb_model.predict(X_test)
+df_pred_non_prob = pd.DataFrame(y_pred_non_prob)
+
+df_pred_non_prob.rename(columns={0:'y_pred'}, inplace=True)
+predictions_test_df = pd.concat([
+    pd.DataFrame(y_pred),
+    df_pred_non_prob.reset_index(drop=True),
+    y_test.reset_index(drop=True),
+    X_test.reset_index(drop=True)], axis=1)
+
+predictions_test_df.rename(columns={'target':'has_cancer (y_true)'}, inplace=True)
+predictions_test_df.to_csv('./predictions/test/test_predictions.csv')
+
+run["predictions/test_set"].upload('./predictions/test/test_predictions.csv')
 
 # end the training run =================================================================
 run.stop()
